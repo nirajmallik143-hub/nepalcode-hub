@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner Face Verification Key System — ©Nirajmallik@hub</title>
+  <style>
+    :root {
+      --bg: #050912;
+      --panel: #0c1424;
+      --panel-2: #121e36;
+      --border: rgba(148, 163, 184, 0.2);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --err: #f87171;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    body {
+      margin: 0; padding: 16px; color: var(--text);
+      background: radial-gradient(circle at top, rgba(56,189,248,0.14), transparent 45%), var(--bg);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    .card {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 18px; padding: 18px; margin-bottom: 16px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.35);
+    }
+    h1 { margin: 0; font-size: 1.2rem; }
+    h2 { margin: 0 0 10px; font-size: 0.92rem; text-transform: uppercase; color: #cbd5e1; }
+    .sub { color: var(--muted); font-size: 0.84rem; margin: 4px 0 0; }
+    .cam-box {
+      position: relative; background: #03060c; border: 1px solid rgba(56,189,248,0.35);
+      border-radius: 14px; overflow: hidden; aspect-ratio: 4 / 3; max-height: 340px;
+      display: flex; align-items: center; justify-content: center; margin: 12px 0;
+    }
+    video, canvas.preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    button {
+      border: none; border-radius: 11px; padding: 10px 14px; font-weight: 700; font-size: 0.86rem; cursor: pointer;
+    }
+    .btn-blue { background: linear-gradient(135deg, #38bdf8, #2563eb); color: #fff; }
+    .btn-ok { background: linear-gradient(135deg, #10b981, #059669); color: #042f2e; }
+    .btn-ghost { background: rgba(255,255,255,0.07); color: var(--text); border: 1px solid var(--border); }
+    .key-out {
+      background: #04070f; border: 1px solid rgba(16,185,129,0.4); border-radius: 12px;
+      padding: 12px; font-family: ui-monospace, monospace; font-size: 1.05rem; font-weight: 800;
+      color: #34d399; text-align: center; letter-spacing: 0.08em; margin-top: 10px; word-break: break-all;
+    }
+    .status { font-size: 0.84rem; margin-top: 10px; min-height: 20px; }
+    footer { text-align: center; color: var(--muted); font-size: 0.76rem; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Owner Face Verification Key System</h1>
+      <p class="sub">Owner-only biometric face template enrollment &amp; live match to issue/unlock Owner Keys • ©Nirajmallik@hub</p>
+    </div>
+
+    <div class="card">
+      <h2>1. Owner Camera Capture</h2>
+      <div class="cam-box">
+        <video id="ownerVideo" autoplay playsinline muted></video>
+        <canvas id="captureCanvas" width="160" height="160" style="display:none;"></canvas>
+      </div>
+      <div class="row">
+        <button class="btn-blue" onclick="startCamera()">Start Camera</button>
+        <button class="btn-ghost" onclick="stopCamera()">Stop Camera</button>
+        <button class="btn-ok" onclick="enrollOwnerFace()">Enroll My Owner Face</button>
+        <button class="btn-blue" onclick="verifyOwnerFaceAndIssueKey()">Verify Face &amp; Issue Owner Key</button>
+      </div>
+      <div class="status" id="faceStatus">Camera idle. Tap Start Camera to enroll or verify owner face.</div>
+      <div class="key-out" id="ownerKeyBox">LOCKED — FACE VERIFICATION REQUIRED</div>
+      <div class="row">
+        <button class="btn-ghost" onclick="copyOwnerKey()">Copy Owner Key</button>
+        <button class="btn-ghost" onclick="resetEnrollment()">Reset Enrolled Face</button>
+      </div>
+    </div>
+
+    <footer>©Nirajmallik@hub • Niraj Mallik (nirajmallik143-hub) • MIT License 2026</footer>
+  </div>
+
+  <script>
+    const OWNER_TEMPLATE_KEY = "mallik_owner_face_template_v1";
+    const OWNER_SESSION_KEY = "mallik_owner_verified_session_v1";
+    const OWNER_FIREBASE = "https://nmdc-ajs-security-default-rtdb.firebaseio.com/mallik_payments/owner_face_keys";
+    const MATCH_THRESHOLD = 0.84;
+
+    let streamRef = null;
+    let lastIssuedKey = "";
+
+    async function startCamera() {
+      const st = document.getElementById("faceStatus");
+      try {
+        streamRef = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
+          audio: false
+        });
+        document.getElementById("ownerVideo").srcObject = streamRef;
+        st.style.color = "#34d399";
+        st.textContent = "Front camera active. Center your face in good lighting.";
+      } catch (err) {
+        st.style.color = "#f87171";
+        st.textContent = "Camera access denied or unavailable: " + err.message;
+      }
+    }
+
+    function stopCamera() {
+      if (streamRef) {
+        streamRef.getTracks().forEach(t => t.stop());
+        streamRef = null;
+      }
+      document.getElementById("ownerVideo").srcObject = null;
+    }
+
+    function extractFaceVector() {
+      const video = document.getElementById("ownerVideo");
+      const canvas = document.getElementById("captureCanvas");
+      if (!video.srcObject || video.readyState < 2) {
+        return null;
+      }
+      const ctx = canvas.getContext("2d");
+      // Crop central square region where face is framed
+      const vw = video.videoWidth || 640;
+      const vh = video.videoHeight || 480;
+      const size = Math.min(vw, vh) * 0.65;
+      const sx = (vw - size) / 2;
+      const sy = (vh - size) / 2;
+
+      ctx.drawImage(video, sx, sy, size, size, 0, 0, 160, 160);
+      // Downsample into a 16x16 luma + gradient feature vector (256 dims)
+      const grid = 16;
+      const cell = 160 / grid;
+      const raw = [];
+      for (let gy = 0; gy < grid; gy++) {
+        for (let gx = 0; gx < grid; gx++) {
+          const img = ctx.getImageData(Math.floor(gx * cell), Math.floor(gy * cell), Math.max(1, Math.floor(cell)), Math.max(1, Math.floor(cell))).data;
+          let lumSum = 0;
+          const pixels = img.length / 4;
+          for (let i = 0; i < img.length; i += 4) {
+            lumSum += 0.299 * img[i] + 0.587 * img[i + 1] + 0.114 * img[i + 2];
+          }
+          raw.push(lumSum / pixels);
+        }
+      }
+      const mean = raw.reduce((a, b) => a + b, 0) / raw.length;
+      const centered = raw.map(v => v - mean);
+      const norm = Math.sqrt(centered.reduce((a, b) => a + b * b, 0)) || 1;
+      return centered.map(v => Number((v / norm).toFixed(5)));
+    }
+
+    function cosineSimilarity(a, b) {
+      if (!a || !b || a.length !== b.length) return 0;
+      let dot = 0;
+      for (let i = 0; i < a.length; i++) dot += a[i] * b[i];
+      return dot;
+    }
+
+    function enrollOwnerFace() {
+      const st = document.getElementById("faceStatus");
+      const vec = extractFaceVector();
+      if (!vec) {
+        st.style.color = "#fbbf24";
+        st.textContent = "Start the camera first so your face can be captured.";
+        return;
+      }
+      const record = {
+        owner: "©Nirajmallik@hub",
+        enrolledAt: new Date().toISOString(),
+        vector: vec
+      };
+      localStorage.setItem(OWNER_TEMPLATE_KEY, JSON.stringify(record));
+      st.style.color = "#34d399";
+      st.textContent = "Owner face template enrolled securely on this device for ©Nirajmallik@hub.";
+    }
+
+    function generateOwner18DigitKey() {
+      const buf = new Uint32Array(3);
+      crypto.getRandomValues(buf);
+      const ts = String(Date.now()).slice(-6);
+      const rnd = `${buf[0]}${buf[1]}${buf[2]}`.replace(/\D/g, "").slice(0, 11).padEnd(11, "9");
+      return ("9" + ts + rnd).slice(0, 18);
+    }
+
+    async function verifyOwnerFaceAndIssueKey() {
+      const st = document.getElementById("faceStatus");
+      const keyBox = document.getElementById("ownerKeyBox");
+      const storedRaw = localStorage.getItem(OWNER_TEMPLATE_KEY);
+
+      if (!storedRaw) {
+        st.style.color = "#fbbf24";
+        st.textContent = "No owner face enrolled yet. Tap 'Enroll My Owner Face' first.";
+        return;
+      }
+
+      const liveVec = extractFaceVector();
+      if (!liveVec) {
+        st.style.color = "#fbbf24";
+        st.textContent = "Camera stream not ready. Tap 'Start Camera' first.";
+        return;
+      }
+
+      const stored = JSON.parse(storedRaw);
+      const score = cosineSimilarity(stored.vector, liveVec);
+
+      if (score < MATCH_THRESHOLD) {
+        st.style.color = "#f87171";
+        st.textContent = `Face verification failed (similarity ${(score * 100).toFixed(1)}% < ${(MATCH_THRESHOLD * 100).toFixed(0)}%). Adjust lighting/angle and try again.`;
+        keyBox.textContent = "ACCESS DENIED — MISMATCH";
+        return;
+      }
+
+      const ownerKey = generateOwner18DigitKey();
+      const expiresAt = Date.now() + 30 * 24 * 60 * 60 * 1000;
+      lastIssuedKey = ownerKey;
+
+      const sessionObj = {
+        brand: "©Nirajmallik@hub",
+        role: "OWNER_MASTER",
+        ownerKey,
+        similarity: Number(score.toFixed(4)),
+        verifiedAt: new Date().toISOString(),
+        expiresAt
+      };
+      localStorage.setItem(OWNER_SESSION_KEY, JSON.stringify(sessionObj));
+
+      try {
+        await fetch(`${OWNER_FIREBASE}/${ownerKey}.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(sessionObj)
+        });
+      } catch (e) {}
+
+      keyBox.textContent = `OWNER-KEY: ${ownerKey}`;
+      st.style.color = "#34d399";
+      st.textContent = `Face matched (${(score * 100).toFixed(1)}%). Owner Master Key issued for ©Nirajmallik@hub.`;
+    }
+
+    function resetEnrollment() {
+      localStorage.removeItem(OWNER_TEMPLATE_KEY);
+      localStorage.removeItem(OWNER_SESSION_KEY);
+      lastIssuedKey = "";
+      document.getElementById("ownerKeyBox").textContent = "LOCKED — FACE VERIFICATION REQUIRED";
+      document.getElementById("faceStatus").style.color = "#94a3b8";
+      document.getElementById("faceStatus").textContent = "Enrolled owner face template cleared.";
+    }
+
+    function copyOwnerKey() {
+      if (lastIssuedKey) {
+        navigator.clipboard.writeText(lastIssuedKey).catch(() => {});
+      }
+    }
+  </script>
+</body>
+</html>
