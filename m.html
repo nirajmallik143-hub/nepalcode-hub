@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NepalCode Hub — GitHub Repository Studio (MIT Licensed)</title>
+  <!--
+    =========================================================================
+    MIT License
+    Copyright (c) 2026 @~Nirajmallikhub — For the Future of Nepal 🇳🇵
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+    =========================================================================
+  -->
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- Highlight.js for Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <!-- Marked.js for Markdown Rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            nepalRed: '#DC143C',
+            nepalBlue: '#003893',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.4); }
+    ::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.5); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.8); }
+    .markdown-body h1, .markdown-body h2, .markdown-body h3 { font-weight: 700; margin-top: 1rem; margin-bottom: 0.5rem; color: #f8fafc; }
+    .markdown-body h1 { font-size: 1.35rem; border-bottom: 1px solid #334155; padding-bottom: 0.3rem; }
+    .markdown-body h2 { font-size: 1.15rem; }
+    .markdown-body p { margin-bottom: 0.75rem; line-height: 1.6; color: #cbd5e1; font-size: 0.9rem; }
+    .markdown-body code { background: #1e293b; padding: 0.15rem 0.35rem; border-radius: 0.375rem; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #38bdf8; }
+    .markdown-body pre { background: #0f172a; padding: 0.85rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 0.75rem; border: 1px solid #1e293b; }
+    .markdown-body pre code { background: transparent; padding: 0; color: #e2e8f0; }
+    .markdown-body ul { list-style-type: disc; padding-left: 1.25rem; margin-bottom: 0.75rem; color: #cbd5e1; font-size: 0.9rem; }
+    .markdown-body a { color: #38bdf8; text-decoration: underline; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col selection:bg-nepalRed selection:text-white">
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-xs w-full pointer-events-none"></div>
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-nepalRed to-nepalBlue flex items-center justify-center shadow-lg shadow-nepalRed/20 font-bold text-white text-lg">
+          N
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-base sm:text-lg tracking-tight text-white">NepalCode Hub</h1>
+            <button id="openLicenseModalBtn" class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition cursor-pointer" title="View Official MIT License">
+              MIT • Future of Nepal 🇳🇵
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-400 font-mono">@~Nirajmallikhub • 2026 Open Source</p>
+        </div>
+      </div>
+
+      <!-- Quick Controls -->
+      <div class="flex items-center gap-2">
+        <button id="toggleSettingsBtn" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+          <span>API & Prompt</span>
+        </button>
+        <button id="toggleSavedDrawerBtn" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+          <span>Saved (<span id="savedCountBadge">0</span>)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Collapsible API Key & System Prompt Panel -->
+  <section id="settingsPanel" class="hidden bg-slate-900 border-b border-slate-800 px-4 py-4">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- API Connectors -->
+      <div class="bg-slate-950/70 p-4 rounded-2xl border border-slate-800 space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">API Connectors</h2>
+          <span class="text-[11px] text-slate-500">Stored locally in browser</span>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Gemini API Key (Optional in Canvas, required locally)</label>
+          <input id="geminiApiKeyInput" type="password" placeholder="AIzaSy..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs font-mono text-slate-100 focus:outline-none focus:border-sky-500" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">GitHub Personal Access Token (Optional — boosts rate limit)</label>
+          <input id="githubTokenInput" type="password" placeholder="ghp_..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs font-mono text-slate-100 focus:outline-none focus:border-sky-500" />
+        </div>
+        <div class="flex justify-end">
+          <button id="saveKeysBtn" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold transition">Save Connectors</button>
+        </div>
+      </div>
+
+      <!-- System Prompt Editor -->
+      <div class="bg-slate-950/70 p-4 rounded-2xl border border-slate-800 flex flex-col justify-between space-y-3">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">System Prompt Editor</h2>
+            <button id="resetSystemPromptBtn" class="text-[11px] text-sky-400 hover:underline">Reset Default</button>
+          </div>
+          <textarea id="systemPromptInput" rows="4" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs font-mono text-slate-200 focus:outline-none focus:border-sky-500"></textarea>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] text-slate-500">Includes MIT License dedication for Nepal</span>
+          <button id="savePromptBtn" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition">Apply Prompt</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Workspace -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-5 space-y-5">
+
+    <!-- GitHub Repository Search & Quick Loader Bar -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl">
+      <form id="repoSearchForm" class="flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+            <svg class="w-5 h-5 text-slate-400" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
+          </div>
+          <input id="repoQueryInput" type="text" placeholder="Enter owner/repo (e.g., tailwindlabs/tailwindcss) or search keyword..." class="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 transition" required />
+        </div>
+        <div class="flex gap-2">
+          <button type="submit" id="loadRepoBtn" class="flex-1 sm:flex-none px-5 py-3 rounded-xl bg-gradient-to-r from-nepalRed to-rose-600 hover:from-rose-600 hover:to-nepalRed text-white font-semibold text-sm shadow-lg shadow-nepalRed/20 transition flex items-center justify-center gap-2">
+            <span>Explore / Search</span>
+          </button>
+        </div>
+      </form>
+
+      <!-- Sample Quick Chips -->
+      <div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
+        <span class="text-slate-500">Quick try:</span>
+        <button type="button" class="quick-repo-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono transition" data-repo="topic:nepal">topic:nepal</button>
+        <button type="button" class="quick-repo-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono transition" data-repo="vercel/next.js">vercel/next.js</button>
+        <button type="button" class="quick-repo-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono transition" data-repo="vitejs/vite">vitejs/vite</button>
+        <button type="button" class="quick-repo-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono transition" data-repo="google-gemini/generative-ai-js">google-gemini/generative-ai-js</button>
+      </div>
+    </div>
+
+    <!-- Search Results List -->
+    <div id="searchResultsSection" class="hidden space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-slate-300">Search Results</h2>
+        <button id="closeSearchResultsBtn" class="text-xs text-slate-400 hover:text-white">Hide</button>
+      </div>
+      <div id="searchResultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+    </div>
+
+    <!-- Active Repository Dashboard -->
+    <div id="repoDashboard" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+      <!-- Left Column: Repo Info & File Explorer (5 cols on lg) -->
+      <div class="lg:col-span-5 space-y-4">
+        <!-- Repository Metadata Card -->
+        <div id="repoMetaCard" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <h2 id="repoFullName" class="text-base sm:text-lg font-bold text-white break-all">No Repository Loaded</h2>
+              <p id="repoDescription" class="text-xs text-slate-400 mt-1 leading-relaxed">Enter a GitHub repository above (e.g. <span class="font-mono text-slate-300">topic:nepal</span>) to explore open-source projects and generate MIT-licensed apps for Nepal.</p>
+            </div>
+            <button id="bookmarkRepoBtn" disabled class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-amber-400 transition" title="Bookmark Repository">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+            </button>
+          </div>
+
+          <!-- Stats Pills -->
+          <div id="repoStatsRow" class="hidden flex flex-wrap gap-2 pt-1">
+            <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs text-amber-400 font-mono flex items-center gap-1">
+              ★ <span id="statStars">0</span>
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs text-sky-400 font-mono flex items-center gap-1">
+              ⑂ <span id="statForks">0</span>
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs text-emerald-400 font-mono flex items-center gap-1">
+              ● <span id="statLang">N/A</span>
+            </span>
+            <a id="statExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 font-medium transition ml-auto">
+              Open GitHub ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- File Tree Explorer -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col">
+          <div class="px-4 py-3 bg-slate-950/60 border-b border-slate-800 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1.5 overflow-x-auto text-xs font-mono text-slate-300" id="breadcrumbContainer">
+              <span class="text-slate-500">root/</span>
+            </div>
+            <button id="goUpDirBtn" class="hidden px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 shrink-0">
+              ↑ Up
+            </button>
+          </div>
+          <div id="fileTreeList" class="divide-y divide-slate-800/60 max-h-[380px] overflow-y-auto">
+            <div class="p-6 text-center text-xs text-slate-500">
+              Load a repository to browse its directory tree.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Multi-Tab Viewer & Gemini AI App Generator (7 cols on lg) -->
+      <div class="lg:col-span-7 flex flex-col bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden min-h-[520px]">
+        <!-- Tab Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 bg-slate-950/80 border-b border-slate-800">
+          <div class="flex items-center gap-1.5">
+            <button data-tab="readme" class="workspace-tab px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-600 text-white transition">
+              README
+            </button>
+            <button data-tab="code" class="workspace-tab px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/70 text-slate-300 hover:bg-slate-800 transition">
+              File Viewer
+            </button>
+            <button data-tab="ai" class="workspace-tab px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/70 text-slate-300 hover:bg-slate-800 transition flex items-center gap-1">
+              <span>✨ AI Repo Studio</span>
+            </button>
+            <button data-tab="preview" class="workspace-tab px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/70 text-slate-300 hover:bg-slate-800 transition">
+              Live Preview
+            </button>
+          </div>
+
+          <!-- Action Buttons for Active Content -->
+          <div class="flex items-center gap-1.5">
+            <button id="copyActiveBtn" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 transition" title="Copy Content">
+              Copy
+            </button>
+            <button id="downloadActiveBtn" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 transition" title="Download File">
+              Download
+            </button>
+            <button id="saveSnippetBtn" class="px-2.5 py-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 text-xs font-medium transition">
+              + Save
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab 1: README Viewer -->
+        <div id="tab-readme" class="tab-panel p-5 overflow-y-auto flex-1 max-h-[600px]">
+          <div id="readmeContent" class="markdown-body text-sm text-slate-300">
+            <div class="flex flex-col items-center justify-center h-64 text-center text-slate-500 space-y-2">
+              <svg class="w-10 h-10 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              <p class="text-xs">Repository README.md will render here automatically.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Source File Viewer -->
+        <div id="tab-code" class="tab-panel hidden flex-1 flex flex-col overflow-hidden">
+          <div class="px-4 py-2 bg-slate-950 border-b border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+            <span id="activeFileName">No file selected</span>
+            <span id="activeFileSize">0 KB</span>
+          </div>
+          <pre class="flex-1 overflow-auto p-4 text-xs font-mono leading-relaxed bg-slate-950 m-0"><code id="codeViewerContent" class="language-plaintext">// Select any file from the repository tree on the left to inspect its source code.</code></pre>
+        </div>
+
+        <!-- Tab 3: AI Repo Studio -->
+        <div id="tab-ai" class="tab-panel hidden flex-1 flex flex-col p-4 space-y-3 overflow-y-auto">
+          <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-semibold text-sky-400">Gemini Repository Assistant</span>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="ai-preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-200 transition" data-prompt="Build a complete single-file HTML/JS web app companion or demo UI inspired by this repository's purpose. Include the 2026 MIT License header dedicated to the future of Nepal.">Generate Companion App</button>
+                <button type="button" class="ai-preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-200 transition" data-prompt="Write a clean, modern, developer-friendly README.md with installation steps, usage examples, and an official 2026 MIT License section dedicated to the future of Nepal.">Generate README.md</button>
+                <button type="button" class="ai-preset-btn px-2.5 py-1 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-700/40 text-[11px] text-emerald-300 transition" data-prompt="Generate a complete, standalone LICENSE file using the MIT License (Copyright 2026 @~Nirajmallikhub — For the Future of Nepal) tailored for open-source developers in Nepal.">Generate MIT LICENSE</button>
+              </div>
+            </div>
+
+            <textarea id="aiUserPrompt" rows="3" placeholder="Ask Gemini to generate an MIT-licensed web app for Nepal, scaffold files, explain code, or build a custom tool..." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"></textarea>
+
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex flex-wrap items-center gap-4">
+                <label class="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
+                  <input id="includeRepoContextCheck" type="checkbox" checked class="rounded bg-slate-800 border-slate-600 text-sky-500 focus:ring-0" />
+                  <span>Include repo context</span>
+                </label>
+                <label class="flex items-center gap-2 text-xs text-emerald-400 cursor-pointer">
+                  <input id="autoApplyMitLicenseCheck" type="checkbox" checked class="rounded bg-slate-800 border-emerald-600 text-emerald-500 focus:ring-0" />
+                  <span>Auto-apply 2026 MIT License (Nepal)</span>
+                </label>
+              </div>
+              <button id="runAiGeneratorBtn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-semibold shadow-lg shadow-sky-500/20 transition flex items-center gap-2">
+                <span>Generate with Gemini</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- AI Output Area -->
+          <div class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-y-auto min-h-[240px]">
+            <div id="aiLoadingIndicator" class="hidden flex items-center justify-center h-40 gap-3 text-xs text-sky-400">
+              <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+              <span>Synthesizing MIT-licensed code with Gemini 3 Flash...</span>
+            </div>
+            <div id="aiOutputRendered" class="markdown-body text-xs text-slate-300">
+              <p class="text-slate-500 italic">AI-generated code, apps, and repository insights will appear here with the <strong>2026 MIT License (For the Future of Nepal)</strong> automatically applied.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Live HTML/JS Sandbox Preview -->
+        <div id="tab-preview" class="tab-panel hidden flex-1 flex flex-col bg-white">
+          <div class="px-3 py-2 bg-slate-950 border-b border-slate-800 flex items-center justify-between text-xs text-slate-300">
+            <span>Sandboxed HTML/JS Preview</span>
+            <button id="refreshPreviewBtn" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-white">Reload Frame</button>
+          </div>
+          <iframe id="livePreviewFrame" sandbox="allow-scripts allow-forms allow-modals" class="w-full flex-1 min-h-[450px] border-0 bg-white"></iframe>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Open-Source Footer Banner -->
+  <footer class="bg-slate-900/90 border-t border-slate-800 px-4 py-3 text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="text-nepalRed font-bold">🇳🇵</span>
+        <span>Built for the Future of Nepal — Open Source under the <strong class="text-slate-200">MIT License</strong></span>
+      </div>
+      <div class="flex items-center gap-3 font-mono text-[11px]">
+        <span>© 2026 @~Nirajmallikhub</span>
+        <button id="footerViewLicenseBtn" class="text-emerald-400 hover:underline">View / Download LICENSE</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Official MIT License Modal -->
+  <div id="licenseModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🇳🇵</span>
+          <div>
+            <h3 class="font-bold text-sm text-white">MIT License — For the Future of Nepal</h3>
+            <p class="text-[11px] font-mono text-emerald-400">Copyright (c) 2026 @~Nirajmallikhub</p>
+          </div>
+        </div>
+        <button id="closeLicenseModalBtn" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300">✕</button>
+      </div>
+
+      <pre id="mitLicenseTextBox" class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-[11px] font-mono text-slate-300 whitespace-pre-wrap leading-relaxed max-h-72 overflow-y-auto"></pre>
+
+      <div class="flex flex-wrap items-center justify-end gap-2 pt-1">
+        <button id="copyLicenseBtn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white transition">Copy LICENSE Text</button>
+        <button id="downloadLicenseFileBtn" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white transition">Download LICENSE File</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Saved Snippets & Bookmarked Repos Drawer -->
+  <div id="savedDrawer" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex justify-end">
+    <div class="w-full max-w-md bg-slate-900 border-l border-slate-800 h-full flex flex-col p-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <h3 class="font-bold text-sm text-white">Saved Repos & Code Snippets</h3>
+        <button id="closeSavedDrawerBtn" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs">✕ Close</button>
+      </div>
+      <div id="savedItemsList" class="flex-1 overflow-y-auto py-3 space-y-2.5"></div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // NEPALCODE HUB — GITHUB REPOSITORY STUDIO (@~Nirajmallikhub, 2026 MIT)
+    // Dedicated to the Open-Source Future of Nepal 🇳🇵
+    // =========================================================================
+
+    const OFFICIAL_MIT_LICENSE = `MIT License
+
+Copyright (c) 2026 @~Nirajmallikhub — For the Future of Nepal
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.`;
+
+    const DEFAULT_SYSTEM_PROMPT =
+      "You are NepalCode Hub AI, an expert full-stack software architect building open-source tools for the future of Nepal. Produce clean, self-contained, production-ready code licensed under the 2026 MIT License (Copyright 2026 @~Nirajmallikhub — For the Future of Nepal) with clear comments and modern responsive UI.";
+
+    // Application State
+    const state = {
+      geminiKey: localStorage.getItem('nch_gemini_key') || '',
+      githubToken: localStorage.getItem('nch_github_token') || '',
+      systemPrompt: localStorage.getItem('nch_system_prompt') || DEFAULT_SYSTEM_PROMPT,
+      currentRepo: null,
+      currentPath: '',
+      activeTab: 'readme',
+      readmeRaw: '',
+      activeFile: { name: '', content: '' },
+      aiRawOutput: '',
+      extractedHtmlCode: '',
+      savedItems: JSON.parse(localStorage.getItem('nch_saved_items') || '[]')
+    };
+
+    // DOM Elements
+    const el = {
+      settingsPanel: document.getElementById('settingsPanel'),
+      toggleSettingsBtn: document.getElementById('toggleSettingsBtn'),
+      geminiApiKeyInput: document.getElementById('geminiApiKeyInput'),
+      githubTokenInput: document.getElementById('githubTokenInput'),
+      saveKeysBtn: document.getElementById('saveKeysBtn'),
+      systemPromptInput: document.getElementById('systemPromptInput'),
+      resetSystemPromptBtn: document.getElementById('resetSystemPromptBtn'),
+      savePromptBtn: document.getElementById('savePromptBtn'),
+
+      repoSearchForm: document.getElementById('repoSearchForm'),
+      repoQueryInput: document.getElementById('repoQueryInput'),
+      loadRepoBtn: document.getElementById('loadRepoBtn'),
+      searchResultsSection: document.getElementById('searchResultsSection'),
+      searchResultsGrid: document.getElementById('searchResultsGrid'),
+      closeSearchResultsBtn: document.getElementById('closeSearchResultsBtn'),
+
+      repoFullName: document.getElementById('repoFullName'),
+      repoDescription: document.getElementById('repoDescription'),
+      bookmarkRepoBtn: document.getElementById('bookmarkRepoBtn'),
+      repoStatsRow: document.getElementById('repoStatsRow'),
+      statStars: document.getElementById('statStars'),
+      statForks: document.getElementById('statForks'),
+      statLang: document.getElementById('statLang'),
+      statExternalLink: document.getElementById('statExternalLink'),
+
+      breadcrumbContainer: document.getElementById('breadcrumbContainer'),
+      goUpDirBtn: document.getElementById('goUpDirBtn'),
+      fileTreeList: document.getElementById('fileTreeList'),
+
+      readmeContent: document.getElementById('readmeContent'),
+      activeFileName: document.getElementById('activeFileName'),
+      activeFileSize: document.getElementById('activeFileSize'),
+      codeViewerContent: document.getElementById('codeViewerContent'),
+
+      aiUserPrompt: document.getElementById('aiUserPrompt'),
+      includeRepoContextCheck: document.getElementById('includeRepoContextCheck'),
+      autoApplyMitLicenseCheck: document.getElementById('autoApplyMitLicenseCheck'),
+      runAiGeneratorBtn: document.getElementById('runAiGeneratorBtn'),
+      aiLoadingIndicator: document.getElementById('aiLoadingIndicator'),
+      aiOutputRendered: document.getElementById('aiOutputRendered'),
+
+      livePreviewFrame: document.getElementById('livePreviewFrame'),
+      refreshPreviewBtn: document.getElementById('refreshPreviewBtn'),
+
+      copyActiveBtn: document.getElementById('copyActiveBtn'),
+      downloadActiveBtn: document.getElementById('downloadActiveBtn'),
+      saveSnippetBtn: document.getElementById('saveSnippetBtn'),
+
+      openLicenseModalBtn: document.getElementById('openLicenseModalBtn'),
+      footerViewLicenseBtn: document.getElementById('footerViewLicenseBtn'),
+      licenseModal: document.getElementById('licenseModal'),
+      closeLicenseModalBtn: document.getElementById('closeLicenseModalBtn'),
+      mitLicenseTextBox: document.getElementById('mitLicenseTextBox'),
+      copyLicenseBtn: document.getElementById('copyLicenseBtn'),
+      downloadLicenseFileBtn: document.getElementById('downloadLicenseFileBtn'),
+
+      toggleSavedDrawerBtn: document.getElementById('toggleSavedDrawerBtn'),
+      savedDrawer: document.getElementById('savedDrawer'),
+      closeSavedDrawerBtn: document.getElementById('closeSavedDrawerBtn'),
+      savedItemsList: document.getElementById('savedItemsList'),
+      savedCountBadge: document.getElementById('savedCountBadge'),
+      toastContainer: document.getElementById('toastContainer')
+    };
+
+    function showToast(message, type = 'info') {
+      const colors = {
+        info: 'bg-slate-800 border-slate-700 text-slate-100',
+        success: 'bg-emerald-950/90 border-emerald-700 text-emerald-200',
+        error: 'bg-rose-950/90 border-rose-700 text-rose-200'
+      };
+      const toast = document.createElement('div');
+      toast.className = `pointer-events-auto px-4 py-3 rounded-xl border text-xs font-medium shadow-xl transition-all duration-300 ${colors[type] || colors.info}`;
+      toast.textContent = message;
+      el.toastContainer.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    function copyTextSafe(text, successMsg = 'Copied to clipboard!') {
+      const tempArea = document.createElement('textarea');
+      tempArea.value = text;
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg, 'success');
+      } catch {
+        showToast('Unable to copy automatically.', 'error');
+      }
+      document.body.removeChild(tempArea);
+    }
+
+    function downloadTextFile(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast(`Downloaded ${filename}`, 'success');
+    }
+
+    function init() {
+      el.geminiApiKeyInput.value = state.geminiKey;
+      el.githubTokenInput.value = state.githubToken;
+      el.systemPromptInput.value = state.systemPrompt;
+      el.mitLicenseTextBox.textContent = OFFICIAL_MIT_LICENSE;
+      renderSavedDrawer();
+    }
+
+    // License Modal Handlers
+    function openLicenseModal() {
+      el.licenseModal.classList.remove('hidden');
+    }
+    el.openLicenseModalBtn.addEventListener('click', openLicenseModal);
+    el.footerViewLicenseBtn.addEventListener('click', openLicenseModal);
+    el.closeLicenseModalBtn.addEventListener('click', () => el.licenseModal.classList.add('hidden'));
+    el.copyLicenseBtn.addEventListener('click', () => copyTextSafe(OFFICIAL_MIT_LICENSE, 'MIT License copied!'));
+    el.downloadLicenseFileBtn.addEventListener('click', () => downloadTextFile('LICENSE', OFFICIAL_MIT_LICENSE));
+
+    // Toggle Settings Panel
+    el.toggleSettingsBtn.addEventListener('click', () => {
+      el.settingsPanel.classList.toggle('hidden');
+    });
+
+    el.saveKeysBtn.addEventListener('click', () => {
+      state.geminiKey = el.geminiApiKeyInput.value.trim();
+      state.githubToken = el.githubTokenInput.value.trim();
+      localStorage.setItem('nch_gemini_key', state.geminiKey);
+      localStorage.setItem('nch_github_token', state.githubToken);
+      showToast('API connectors saved locally.', 'success');
+    });
+
+    el.savePromptBtn.addEventListener('click', () => {
+      state.systemPrompt = el.systemPromptInput.value.trim() || DEFAULT_SYSTEM_PROMPT;
+      localStorage.setItem('nch_system_prompt', state.systemPrompt);
+      showToast('System prompt updated.', 'success');
+    });
+
+    el.resetSystemPromptBtn.addEventListener('click', () => {
+      state.systemPrompt = DEFAULT_SYSTEM_PROMPT;
+      el.systemPromptInput.value = DEFAULT_SYSTEM_PROMPT;
+      localStorage.setItem('nch_system_prompt', DEFAULT_SYSTEM_PROMPT);
+      showToast('System prompt reset to default.', 'info');
+    });
+
+    // Tab Switching Logic
+    function switchTab(tabName) {
+      state.activeTab = tabName;
+      document.querySelectorAll('.workspace-tab').forEach(btn => {
+        const isMatch = btn.dataset.tab === tabName;
+        btn.className = isMatch
+          ? 'workspace-tab px-3 py-1.5 rounded-xl text-xs font-semibold bg-sky-600 text-white transition'
+          : 'workspace-tab px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/70 text-slate-300 hover:bg-slate-800 transition';
+      });
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('hidden', panel.id !== `tab-${tabName}`);
+      });
+      if (tabName === 'preview') {
+        updateLivePreview();
+      }
+    }
+
+    document.querySelectorAll('.workspace-tab').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    // GitHub API Helper
+    async function githubFetch(url) {
+      const headers = { 'Accept': 'application/vnd.github.v3+json' };
+      if (state.githubToken) {
+        headers['Authorization'] = `Bearer ${state.githubToken}`;
+      }
+      const res = await fetch(url, { headers });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || `GitHub API Error (${res.status})`);
+      }
+      return res.json();
+    }
+
+    function parseRepoInput(raw) {
+      const cleaned = raw.trim().replace(/^https?:\/\/(www\.)?github\.com\//i, '').replace(/\/+$/, '');
+      const parts = cleaned.split('/');
+      if (parts.length >= 2 && parts[0] && parts[1] && !cleaned.includes(' ')) {
+        return { type: 'direct', owner: parts[0], repo: parts[1] };
+      }
+      return { type: 'search', query: raw.trim() };
+    }
+
+    el.repoSearchForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = el.repoQueryInput.value;
+      if (!input.trim()) return;
+
+      const parsed = parseRepoInput(input);
+      if (parsed.type === 'direct') {
+        el.searchResultsSection.classList.add('hidden');
+        await loadRepository(parsed.owner, parsed.repo);
+      } else {
+        await searchRepositories(parsed.query);
+      }
+    });
+
+    document.querySelectorAll('.quick-repo-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        el.repoQueryInput.value = chip.dataset.repo;
+        el.repoSearchForm.dispatchEvent(new Event('submit'));
+      });
+    });
+
+    async function searchRepositories(query) {
+      try {
+        el.loadRepoBtn.disabled = true;
+        el.loadRepoBtn.textContent = 'Searching...';
+        const data = await githubFetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&per_page=9`);
+        el.searchResultsGrid.innerHTML = '';
+
+        if (!data.items || data.items.length === 0) {
+          showToast('No repositories matched your query.', 'info');
+          return;
+        }
+
+        data.items.forEach(repo => {
+          const card = document.createElement('div');
+          card.className = 'bg-slate-900 hover:bg-slate-800/90 border border-slate-800 rounded-xl p-3.5 cursor-pointer transition flex flex-col justify-between gap-2';
+          card.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="text-xs font-bold text-sky-400 truncate">${repo.full_name}</h3>
+                <span class="text-[11px] font-mono text-amber-400 shrink-0">★ ${repo.stargazers_count.toLocaleString()}</span>
+              </div>
+              <p class="text-xs text-slate-400 line-clamp-2 mt-1">${repo.description || 'No description provided.'}</p>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-800/70">
+              <span>${repo.language || 'Markdown'}</span>
+              <span class="text-slate-300 font-medium">Inspect →</span>
+            </div>
+          `;
+          card.addEventListener('click', () => {
+            el.repoQueryInput.value = repo.full_name;
+            el.searchResultsSection.classList.add('hidden');
+            loadRepository(repo.owner.login, repo.name);
+          });
+          el.searchResultsGrid.appendChild(card);
+        });
+
+        el.searchResultsSection.classList.remove('hidden');
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        el.loadRepoBtn.disabled = false;
+        el.loadRepoBtn.textContent = 'Explore / Search';
+      }
+    }
+
+    el.closeSearchResultsBtn.addEventListener('click', () => {
+      el.searchResultsSection.classList.add('hidden');
+    });
+
+    async function loadRepository(owner, repoName) {
+      try {
+        el.loadRepoBtn.disabled = true;
+        el.loadRepoBtn.textContent = 'Loading...';
+
+        const meta = await githubFetch(`https://api.github.com/repos/${owner}/${repoName}`);
+        state.currentRepo = {
+          owner: meta.owner.login,
+          name: meta.name,
+          full_name: meta.full_name,
+          description: meta.description || 'No description available.',
+          stars: meta.stargazers_count,
+          forks: meta.forks_count,
+          language: meta.language || 'Plaintext',
+          default_branch: meta.default_branch,
+          html_url: meta.html_url
+        };
+        state.currentPath = '';
+
+        el.repoFullName.textContent = state.currentRepo.full_name;
+        el.repoDescription.textContent = state.currentRepo.description;
+        el.statStars.textContent = state.currentRepo.stars.toLocaleString();
+        el.statForks.textContent = state.currentRepo.forks.toLocaleString();
+        el.statLang.textContent = state.currentRepo.language;
+        el.statExternalLink.href = state.currentRepo.html_url;
+        el.repoStatsRow.classList.remove('hidden');
+        el.bookmarkRepoBtn.disabled = false;
+
+        await Promise.all([
+          loadDirectoryContents(''),
+          loadReadme(owner, repoName)
+        ]);
+
+        switchTab('readme');
+        showToast(`Loaded ${state.currentRepo.full_name}`, 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        el.loadRepoBtn.disabled = false;
+        el.loadRepoBtn.textContent = 'Explore / Search';
+      }
+    }
+
+    async function loadReadme(owner, repo) {
+      try {
+        const readmeData = await githubFetch(`https://api.github.com/repos/${owner}/${repo}/readme`);
+        const decoded = decodeBase64Utf8(readmeData.content);
+        state.readmeRaw = decoded;
+        el.readmeContent.innerHTML = marked.parse(decoded);
+        el.readmeContent.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
+      } catch {
+        state.readmeRaw = '# No README.md found\nUse the **AI Repo Studio** tab to generate a README.md with the 2026 MIT License for Nepal.';
+        el.readmeContent.innerHTML = marked.parse(state.readmeRaw);
+      }
+    }
+
+    function decodeBase64Utf8(base64Str) {
+      const clean = base64Str.replace(/\s/g, '');
+      const bytes = Uint8Array.from(atob(clean), c => c.charCodeAt(0));
+      return new TextDecoder('utf-8').decode(bytes);
+    }
+
+    async function loadDirectoryContents(path) {
+      if (!state.currentRepo) return;
+      try {
+        state.currentPath = path;
+        renderBreadcrumbs();
+        el.fileTreeList.innerHTML = '<div class="p-4 text-xs text-slate-400 animate-pulse">Loading directory...</div>';
+
+        const url = `https://api.github.com/repos/${state.currentRepo.owner}/${state.currentRepo.name}/contents/${path}`;
+        const items = await githubFetch(url);
+
+        if (!Array.isArray(items)) {
+          openFileContent(items);
+          return;
+        }
+
+        items.sort((a, b) => {
+          if (a.type === b.type) return a.name.localeCompare(b.name);
+          return a.type === 'dir' ? -1 : 1;
+        });
+
+        el.fileTreeList.innerHTML = '';
+        items.forEach(item => {
+          const row = document.createElement('button');
+          row.type = 'button';
+          row.className = 'w-full px-4 py-2.5 hover:bg-slate-800/80 flex items-center justify-between text-left transition group';
+          const isDir = item.type === 'dir';
+          row.innerHTML = `
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="text-sm">${isDir ? '📁' : '📄'}</span>
+              <span class="text-xs font-mono truncate ${isDir ? 'text-sky-300 font-medium' : 'text-slate-300 group-hover:text-white'}">${item.name}</span>
+            </div>
+            <span class="text-[11px] font-mono text-slate-500 shrink-0">${isDir ? 'DIR' : formatBytes(item.size)}</span>
+          `;
+          row.addEventListener('click', () => {
+            if (isDir) {
+              loadDirectoryContents(item.path);
+            } else {
+              loadSingleFile(item.path);
+            }
+          });
+          el.fileTreeList.appendChild(row);
+        });
+      } catch (err) {
+        el.fileTreeList.innerHTML = `<div class="p-4 text-xs text-rose-400">${err.message}</div>`;
+      }
+    }
+
+    function renderBreadcrumbs() {
+      el.goUpDirBtn.classList.toggle('hidden', !state.currentPath);
+      const segments = state.currentPath ? state.currentPath.split('/') : [];
+      el.breadcrumbContainer.innerHTML = '';
+
+      const rootBtn = document.createElement('button');
+      rootBtn.className = 'hover:text-sky-400 text-slate-400';
+      rootBtn.textContent = 'root';
+      rootBtn.addEventListener('click', () => loadDirectoryContents(''));
+      el.breadcrumbContainer.appendChild(rootBtn);
+
+      let cumulative = '';
+      segments.forEach(seg => {
+        cumulative = cumulative ? `${cumulative}/${seg}` : seg;
+        const targetPath = cumulative;
+        const sep = document.createElement('span');
+        sep.textContent = '/';
+        sep.className = 'text-slate-600';
+        el.breadcrumbContainer.appendChild(sep);
+
+        const btn = document.createElement('button');
+        btn.className = 'hover:text-sky-400 text-slate-200 truncate max-w-[110px]';
+        btn.textContent = seg;
+        btn.addEventListener('click', () => loadDirectoryContents(targetPath));
+        el.breadcrumbContainer.appendChild(btn);
+      });
+    }
+
+    el.goUpDirBtn.addEventListener('click', () => {
+      if (!state.currentPath) return;
+      const parts = state.currentPath.split('/');
+      parts.pop();
+      loadDirectoryContents(parts.join('/'));
+    });
+
+    async function loadSingleFile(path) {
+      try {
+        switchTab('code');
+        el.activeFileName.textContent = path;
+        el.codeViewerContent.textContent = 'Fetching file content...';
+
+        const fileData = await githubFetch(`https://api.github.com/repos/${state.currentRepo.owner}/${state.currentRepo.name}/contents/${path}`);
+        openFileContent(fileData);
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function openFileContent(fileData) {
+      if (!fileData.content) {
+        el.codeViewerContent.textContent = '// Binary or oversized file cannot be displayed inline.';
+        return;
+      }
+      const decoded = decodeBase64Utf8(fileData.content);
+      state.activeFile = { name: fileData.name, content: decoded };
+      el.activeFileName.textContent = fileData.path || fileData.name;
+      el.activeFileSize.textContent = formatBytes(fileData.size || decoded.length);
+
+      el.codeViewerContent.removeAttribute('data-highlighted');
+      el.codeViewerContent.className = 'hljs';
+      el.codeViewerContent.textContent = decoded;
+      hljs.highlightElement(el.codeViewerContent);
+
+      if (fileData.name.endsWith('.html') || fileData.name.endsWith('.htm')) {
+        state.extractedHtmlCode = decoded;
+      }
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+    }
+
+    // =========================================================================
+    // GEMINI 3 FLASH AI STUDIO (With 2026 MIT License Injector for Nepal)
+    // =========================================================================
+
+    document.querySelectorAll('.ai-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        el.aiUserPrompt.value = btn.dataset.prompt;
+        el.runAiGeneratorBtn.click();
+      });
+    });
+
+    async function callGeminiWithBackoff(userPrompt, systemPrompt) {
+      const apiKey = state.geminiKey || "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      const payload = {
+        contents: [{ parts: [{ text: userPrompt }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] }
+      };
+
+      const delays = [1000, 2000, 4000, 8000];
+      for (let attempt = 0; attempt <= delays.length; attempt++) {
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) {
+            if (response.status === 429 && attempt < delays.length) {
+              await new Promise(r => setTimeout(r, delays[attempt]));
+              continue;
+            }
+            const errJson = await response.json().catch(() => ({}));
+            throw new Error(errJson.error?.message || `Gemini API Error (${response.status})`);
+          }
+
+          const result = await response.json();
+          const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (!text) throw new Error('Empty response received from Gemini.');
+          return text;
+        } catch (err) {
+          if (attempt === delays.length) throw err;
+          await new Promise(r => setTimeout(r, delays[attempt]));
+        }
+      }
+    }
+
+    el.runAiGeneratorBtn.addEventListener('click', async () => {
+      const promptText = el.aiUserPrompt.value.trim();
+      if (!promptText) {
+        showToast('Enter a prompt or pick a preset button first.', 'info');
+        return;
+      }
+
+      const contextParts = [];
+      if (el.includeRepoContextCheck.checked && state.currentRepo) {
+        contextParts.push(
+          `Target GitHub Repository: ${state.currentRepo.full_name}`,
+          `Description: ${state.currentRepo.description}`,
+          `Primary Language: ${state.currentRepo.language}`
+        );
+        if (state.readmeRaw) {
+          contextParts.push(`README Excerpt:\n${state.readmeRaw.slice(0, 2500)}`);
+        }
+        if (state.activeFile.content) {
+          contextParts.push(`Active File (${state.activeFile.name}):\n${state.activeFile.content.slice(0, 2500)}`);
+        }
+      }
+
+      if (el.autoApplyMitLicenseCheck.checked) {
+        contextParts.push(
+          `MANDATORY LICENSE REQUIREMENT: Include an official 2026 MIT License notice ("Copyright (c) 2026 @~Nirajmallikhub — For the Future of Nepal") inside any generated source code header or documentation.`
+        );
+      }
+
+      const fullPrompt = contextParts.length
+        ? `${contextParts.join('\n\n')}\n\nUser Request:\n${promptText}`
+        : promptText;
+
+      try {
+        el.runAiGeneratorBtn.disabled = true;
+        el.aiLoadingIndicator.classList.remove('hidden');
+        el.aiOutputRendered.classList.add('hidden');
+
+        const generatedText = await callGeminiWithBackoff(fullPrompt, state.systemPrompt);
+        state.aiRawOutput = generatedText;
+
+        const htmlMatch = generatedText.match(/```html\s*([\s\S]*?)```/i);
+        if (htmlMatch && htmlMatch[1]) {
+          let htmlCode = htmlMatch[1].trim();
+          if (el.autoApplyMitLicenseCheck.checked && !htmlCode.includes('MIT License')) {
+            htmlCode = `<!--\n${OFFICIAL_MIT_LICENSE}\n-->\n${htmlCode}`;
+          }
+          state.extractedHtmlCode = htmlCode;
+          showToast('MIT-Licensed HTML app ready! Open "Live Preview" to test.', 'success');
+        } else {
+          showToast('Generation complete with MIT License!', 'success');
+        }
+
+        el.aiOutputRendered.innerHTML = marked.parse(generatedText);
+        el.aiOutputRendered.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        el.runAiGeneratorBtn.disabled = false;
+        el.aiLoadingIndicator.classList.add('hidden');
+        el.aiOutputRendered.classList.remove('hidden');
+      }
+    });
+
+    function updateLivePreview() {
+      const htmlToRender = state.extractedHtmlCode || `
+        <!DOCTYPE html>
+        <html>
+        <body style="font-family: sans-serif; display:flex; align-items:center; justify-content:center; height:90vh; color:#475569; text-align:center; padding:20px;">
+          <div>
+            <div style="font-size:32px; margin-bottom:8px;">🇳🇵</div>
+            <h2 style="margin-bottom:8px; color:#0f172a;">Live Preview Ready (MIT Licensed)</h2>
+            <p style="font-size:14px;">Open an <code>.html</code> file from any GitHub repo or click <strong>"Generate Companion App"</strong> in AI Repo Studio to run it live here.</p>
+          </div>
+        <button onclick="document.getElementById('mallikPayModal').style.display='flex'" style="position:fixed;bottom:16px;right:16px;z-index:9998;background:linear-gradient(135deg,#38bdf8,#2563eb);color:#fff;border:none;border-radius:999px;padding:10px 16px;font-weight:700;box-shadow:0 8px 20px rgba(0,0,0,0.4);cursor:pointer;">★ Pro 1-Month</button><div id="mallikPayModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:12px;"><div style="position:relative;width:100%;max-width:440px;height:88vh;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,0.2);background:#0b0f19;"><button onclick="document.getElementById('mallikPayModal').style.display='none'" style="position:absolute;top:10px;right:12px;z-index:10;background:rgba(255,255,255,0.15);color:#fff;border:none;border-radius:50%;width:32px;height:32px;font-weight:700;cursor:pointer;">✕</button><iframe src="payment.html" style="width:100%;height:100%;border:none;"></iframe></div></div></body>
+        </html>
+      `;
+      el.livePreviewFrame.srcdoc = htmlToRender;
+    }
+
+    el.refreshPreviewBtn.addEventListener('click', updateLivePreview);
+
+    // =========================================================================
+    // CLIPBOARD, DOWNLOAD & LOCAL STORAGE BOOKMARKS/SNIPPETS
+    // =========================================================================
+
+    function getActiveContentPayload() {
+      if (state.activeTab === 'readme') {
+        return { title: `${state.currentRepo?.name || 'repo'}-README.md`, content: state.readmeRaw };
+      }
+      if (state.activeTab === 'code') {
+        return { title: state.activeFile.name || 'snippet.txt', content: state.activeFile.content };
+      }
+      if (state.activeTab === 'ai') {
+        return { title: `${state.currentRepo?.name || 'nepalcode'}-ai-output.md`, content: state.aiRawOutput };
+      }
+      if (state.activeTab === 'preview') {
+        return { title: `${state.currentRepo?.name || 'nepal-app'}-mit.html`, content: state.extractedHtmlCode };
+      }
+      return { title: 'output.txt', content: '' };
+    }
+
+    el.copyActiveBtn.addEventListener('click', () => {
+      const { content } = getActiveContentPayload();
+      if (!content) {
+        showToast('Nothing to copy in this tab.', 'info');
+        return;
+      }
+      copyTextSafe(content);
+    });
+
+    el.downloadActiveBtn.addEventListener('click', () => {
+      const { title, content } = getActiveContentPayload();
+      if (!content) {
+        showToast('No content available to download.', 'info');
+        return;
+      }
+      downloadTextFile(title, content);
+    });
+
+    el.bookmarkRepoBtn.addEventListener('click', () => {
+      if (!state.currentRepo) return;
+      const exists = state.savedItems.some(item => item.type === 'repo' && item.fullName === state.currentRepo.full_name);
+      if (exists) {
+        showToast('Repository already bookmarked.', 'info');
+        return;
+      }
+      state.savedItems.unshift({
+        id: Date.now(),
+        type: 'repo',
+        title: state.currentRepo.full_name,
+        fullName: state.currentRepo.full_name,
+        owner: state.currentRepo.owner,
+        repo: state.currentRepo.name,
+        meta: state.currentRepo.language
+      });
+      persistSavedItems();
+      showToast(`Bookmarked ${state.currentRepo.full_name}`, 'success');
+    });
+
+    el.saveSnippetBtn.addEventListener('click', () => {
+      const { title, content } = getActiveContentPayload();
+      if (!content) {
+        showToast('No content to save.', 'info');
+        return;
+      }
+      state.savedItems.unshift({
+        id: Date.now(),
+        type: 'snippet',
+        title,
+        content,
+        meta: `MIT 2026 • ${new Date().toLocaleDateString()}`
+      });
+      persistSavedItems();
+      showToast(`Saved "${title}" locally.`, 'success');
+    });
+
+    function persistSavedItems() {
+      localStorage.setItem('nch_saved_items', JSON.stringify(state.savedItems));
+      renderSavedDrawer();
+    }
+
+    function renderSavedDrawer() {
+      el.savedCountBadge.textContent = state.savedItems.length;
+      el.savedItemsList.innerHTML = '';
+
+      if (state.savedItems.length === 0) {
+        el.savedItemsList.innerHTML = '<p class="text-xs text-slate-500 text-center py-8">No bookmarked repos or saved snippets yet.</p>';
+        return;
+      }
+
+      state.savedItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center justify-between gap-2';
+        card.innerHTML = `
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded ${item.type === 'repo' ? 'bg-sky-500/10 text-sky-400' : 'bg-amber-500/10 text-amber-400'}">${item.type}</span>
+              <h4 class="text-xs font-semibold text-slate-200 truncate">${item.title}</h4>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">${item.meta || ''}</p>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button class="load-saved-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-white">Open</button>
+            <button class="del-saved-btn px-2 py-1 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-xs text-rose-300">✕</button>
+          </div>
+        `;
+
+        card.querySelector('.load-saved-btn').addEventListener('click', () => {
+          el.savedDrawer.classList.add('hidden');
+          if (item.type === 'repo') {
+            el.repoQueryInput.value = item.fullName;
+            loadRepository(item.owner, item.repo);
+          } else {
+            state.aiRawOutput = item.content;
+            el.aiOutputRendered.innerHTML = marked.parse(item.content);
+            el.aiOutputRendered.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+            switchTab('ai');
+          }
+        });
+
+        card.querySelector('.del-saved-btn').addEventListener('click', () => {
+          state.savedItems = state.savedItems.filter(s => s.id !== item.id);
+          persistSavedItems();
+        });
+
+        el.savedItemsList.appendChild(card);
+      });
+    }
+
+    el.toggleSavedDrawerBtn.addEventListener('click', () => el.savedDrawer.classList.remove('hidden'));
+    el.closeSavedDrawerBtn.addEventListener('click', () => el.savedDrawer.classList.add('hidden'));
+
+    init();
+  </script>
+<button onclick="document.getElementById('mallikPayModal').style.display='flex'" style="position:fixed;bottom:16px;right:16px;z-index:9998;background:linear-gradient(135deg,#38bdf8,#2563eb);color:#fff;border:none;border-radius:999px;padding:10px 16px;font-weight:700;box-shadow:0 8px 20px rgba(0,0,0,0.4);cursor:pointer;">★ Pro 1-Month</button><div id="mallikPayModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:12px;"><div style="position:relative;width:100%;max-width:440px;height:88vh;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,0.2);background:#0b0f19;"><button onclick="document.getElementById('mallikPayModal').style.display='none'" style="position:absolute;top:10px;right:12px;z-index:10;background:rgba(255,255,255,0.15);color:#fff;border:none;border-radius:50%;width:32px;height:32px;font-weight:700;cursor:pointer;">✕</button><iframe src="payment.html" style="width:100%;height:100%;border:none;"></iframe></div></div></body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mallik Group — Aani & Botim 1-Month Access</title>
+  <style>
+    :root { --bg:#0b0f19; --card:rgba(255,255,255,0.06); --border:rgba(255,255,255,0.14); --accent:#38bdf8; --success:#22c55e; --text:#f8fafc; --muted:#94a3b8; }
+    * { box-sizing:border-box; font-family:system-ui,-apple-system,sans-serif; }
+    body { margin:0; min-height:100vh; background:radial-gradient(circle at top,#1e293b,var(--bg)); color:var(--text); display:flex; align-items:center; justify-content:center; padding:16px; }
+    .container { width:100%; max-width:420px; background:var(--card); backdrop-filter:blur(16px); border:1px solid var(--border); border-radius:20px; padding:22px; box-shadow:0 20px 40px rgba(0,0,0,0.45); }
+    h1 { font-size:1.25rem; margin:0 0 6px; text-align:center; }
+    .subtitle { font-size:0.85rem; color:var(--muted); text-align:center; margin-bottom:18px; }
+    .tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px; }
+    .tab-btn { padding:10px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,0.04); color:var(--text); font-weight:600; cursor:pointer; }
+    .tab-btn.active { background:var(--accent); color:#082f49; border-color:var(--accent); }
+    .qr-box { background:#fff; border-radius:16px; padding:14px; text-align:center; margin-bottom:14px; }
+    .qr-box img { width:210px; height:210px; object-fit:contain; display:block; margin:0 auto; }
+    .qr-caption { color:#0f172a; font-size:0.82rem; font-weight:700; margin-top:8px; }
+    .info-pill { display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:0.85rem; margin-bottom:14px; }
+    .copy-btn { background:rgba(56,189,248,0.2); color:var(--accent); border:none; border-radius:8px; padding:5px 10px; font-size:0.78rem; font-weight:600; cursor:pointer; }
+    label { display:block; font-size:0.82rem; color:var(--muted); margin-bottom:6px; }
+    input { width:100%; padding:12px; border-radius:12px; border:1px solid var(--border); background:rgba(15,23,42,0.8); color:var(--text); font-size:0.95rem; letter-spacing:1px; margin-bottom:12px; }
+    input:focus { outline:none; border-color:var(--accent); }
+    .submit-btn { width:100%; padding:13px; border:none; border-radius:12px; background:linear-gradient(135deg,#38bdf8,#2563eb); color:#fff; font-size:0.95rem; font-weight:700; cursor:pointer; }
+    .status { margin-top:12px; font-size:0.83rem; text-align:center; min-height:20px; }
+    .active-card { display:none; text-align:center; padding:16px 8px; }
+    .badge { display:inline-block; background:rgba(34,197,94,0.18); color:var(--success); border:1px solid rgba(34,197,94,0.4); padding:6px 14px; border-radius:999px; font-size:0.8rem; font-weight:700; margin-bottom:12px; }
+    .countdown { font-size:1.4rem; font-weight:800; margin:10px 0; color:var(--accent); }
+    .meta { font-size:0.8rem; color:var(--muted); line-height:1.5; }
+    .wa-btn { margin-top:14px; display:inline-block; padding:10px 16px; border-radius:10px; background:#22c55e; color:#052e16; font-weight:700; text-decoration:none; font-size:0.85rem; }
+    footer { margin-top:16px; text-align:center; font-size:0.72rem; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="checkoutView">
+      <h1>1-Month Pro Access (AED 25)</h1>
+      <p class="subtitle">Scan via Aani (All UAE Banks) or Botim, then enter your 18-digit receipt code.</p>
+      <div class="tabs">
+        <button class="tab-btn active" id="tabAani" onclick="switchQR('aani')">Aani (mBank)</button>
+        <button class="tab-btn" id="tabBotim" onclick="switchQR('botim')">Botim Pay</button>
+      </div>
+      <div class="qr-box">
+        <img id="qrImage" src="aani-qr.png" alt="Payment QR Code" />
+        <div class="qr-caption" id="qrLabel">Scan with any UAE Bank App or Botim</div>
+      </div>
+      <div class="info-pill">
+        <span>UAE Mobile: <strong id="phoneText">+971502297451</strong></span>
+        <button class="copy-btn" onclick="copyNumber()">Copy</button>
+      </div>
+      <label for="userEmail">Your Email or Name</label>
+      <input type="text" id="userEmail" placeholder="e.g. user@email.com" />
+      <label for="refCode">18-Digit Payment Reference Code</label>
+      <input type="text" id="refCode" inputmode="numeric" maxlength="18" placeholder="Enter 18-digit transaction ID" oninput="this.value = this.value.replace(/\\D/g, '').slice(0, 18)" />
+      <button class="submit-btn" onclick="activateSubscription()">Verify 18-Digit Code & Unlock 1 Month</button>
+      <div class="status" id="statusMsg"></div>
+    </div>
+    <div id="activeView" class="active-card">
+      <div class="badge">● 1-MONTH ACCESS ACTIVE</div>
+      <h2>Subscription Unlocked</h2>
+      <div class="countdown" id="timerDisplay">30d 00h 00m</div>
+      <div class="meta" id="subDetails"></div>
+      <a id="waConfirmLink" class="wa-btn" target="_blank" rel="noopener">Send Receipt Proof on WhatsApp</a>
+    </div>
+    <footer>© 2026 Niraj Mallik (Mallik Group) • MIT License</footer>
+  </div>
+  <script>
+    const FIREBASE_DB_URL = "https://nmdc-ajs-security-default-rtdb.firebaseio.com";
+    const ADMIN_WHATSAPP = "971502297451";
+    const PLAN_DAYS = 30;
+    const STORAGE_KEY = "mallik_1month_sub_v1";
+    const USED_CODES_KEY = "mallik_used_18digit_codes";
+    let selectedMethod = "Aani (mBank)";
+
+    function switchQR(type) {
+      const img = document.getElementById("qrImage");
+      const label = document.getElementById("qrLabel");
+      document.getElementById("tabAani").classList.toggle("active", type === "aani");
+      document.getElementById("tabBotim").classList.toggle("active", type === "botim");
+      if (type === "aani") {
+        img.src = "aani-qr.png";
+        label.textContent = "Scan with any UAE Bank App or Botim (Aani)";
+        selectedMethod = "Aani (mBank)";
+      } else {
+        img.src = "botim-qr.png";
+        label.textContent = "Scan inside Botim App (PayBy)";
+        selectedMethod = "Botim Pay";
+      }
+    }
+    function copyNumber() {
+      navigator.clipboard.writeText("+971502297451");
+      showStatus("Phone number +971502297451 copied!", "#38bdf8");
+    }
+    function showStatus(msg, color) {
+      const el = document.getElementById("statusMsg");
+      el.style.color = color;
+      el.textContent = msg;
+    }
+    async function activateSubscription() {
+      const user = document.getElementById("userEmail").value.trim() || "Guest User";
+      const code = document.getElementById("refCode").value.trim();
+      if (!/^\\d{18}$/.test(code)) {
+        showStatus("Invalid code (" + code.length + "/18 digits). Enter the exact 18-digit reference number.", "#f59e0b");
+        return;
+      }
+      const usedCodes = JSON.parse(localStorage.getItem(USED_CODES_KEY) || "[]");
+      if (usedCodes.includes(code)) {
+        showStatus("This 18-digit reference code has already been redeemed.", "#ef4444");
+        return;
+      }
+      const now = Date.now();
+      const expiresAt = now + PLAN_DAYS * 24 * 60 * 60 * 1000;
+      const record = {
+        user: user, method: selectedMethod, referenceCode18: code,
+        activatedAt: new Date(now).toISOString(),
+        expiresAt: new Date(expiresAt).toISOString(),
+        expiresTimestamp: expiresAt, durationDays: PLAN_DAYS, status: "VERIFIED_1_MONTH"
+      };
+      if (FIREBASE_DB_URL) {
+        try {
+          showStatus("Syncing 18-digit payment code to Firebase...", "#38bdf8");
+          const checkRes = await fetch(FIREBASE_DB_URL + "/mallik_payments/" + code + ".json");
+          const existing = await checkRes.json();
+          if (existing) {
+            showStatus("This 18-digit code is already registered in the database.", "#ef4444");
+            return;
+          }
+          await fetch(FIREBASE_DB_URL + "/mallik_payments/" + code + ".json", {
+            method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(record)
+          });
+        } catch (err) { console.warn("Firebase sync skipped:", err); }
+      }
+      usedCodes.push(code);
+      localStorage.setItem(USED_CODES_KEY, JSON.stringify(usedCodes));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(record));
+      renderActiveSubscription(record);
+    }
+    function renderActiveSubscription(record) {
+      document.getElementById("checkoutView").style.display = "none";
+      document.getElementById("activeView").style.display = "block";
+      const expDate = new Date(record.expiresTimestamp).toLocaleString();
+      document.getElementById("subDetails").innerHTML =
+        "<strong>Account:</strong> " + record.user + "<br/>" +
+        "<strong>Method:</strong> " + record.method + "<br/>" +
+        "<strong>18-Digit Ref:</strong> " + record.referenceCode18 + "<br/>" +
+        "<strong>Valid Until:</strong> " + expDate;
+      const waText = encodeURIComponent("Hello Niraj, I completed my 1-month payment via " + record.method + ".\n18-Digit Ref: " + record.referenceCode18 + "\nUser: " + record.user);
+      document.getElementById("waConfirmLink").href = "https://wa.me/" + ADMIN_WHATSAPP + "?text=" + waText;
+      updateCountdown(record.expiresTimestamp);
+      setInterval(function() { updateCountdown(record.expiresTimestamp); }, 60000);
+    }
+    function updateCountdown(expiresTimestamp) {
+      const diff = expiresTimestamp - Date.now();
+      if (diff <= 0) { localStorage.removeItem(STORAGE_KEY); location.reload(); return; }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / (1000 * 60)) % 60);
+      document.getElementById("timerDisplay").textContent = days + "d " + hours + "h " + mins + "m remaining";
+    }
+    (function init() {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+      if (saved && saved.expiresTimestamp > Date.now()) { renderActiveSubscription(saved); }
+    })();
+  </script>
+</body>
+</html>
